@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "770956400532",
+    "project_id": "eventifycampus-73a1e",
+    "storage_bucket": "eventifycampus-73a1e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770956400532:android:80db088df4029eb66e6181",
+        "android_client_info": {
+          "package_name": "com.rido.eventifycampus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlAkpq08W2YEESzrgUNCtAnxwgJQgQF14"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
