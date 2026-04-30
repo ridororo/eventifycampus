@@ -14,7 +14,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rido.eventifycampus.model.Event
 
@@ -32,7 +33,7 @@ fun EventDetailScreen(
                 title = { Text("Detail Event") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
                     }
                 }
             )
@@ -60,7 +61,6 @@ fun EventDetailScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Image Placeholder
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,7 +68,10 @@ fun EventDetailScreen(
                     .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Event Header Image", color = MaterialTheme.colorScheme.secondary)
+                Text(
+                    text = "Event Header Image",
+                    color = MaterialTheme.colorScheme.secondary
+                )
             }
 
             Column(modifier = Modifier.padding(20.dp)) {
@@ -77,41 +80,65 @@ fun EventDetailScreen(
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 Badge(containerColor = MaterialTheme.colorScheme.tertiary) {
-                    Text(event.category, color = MaterialTheme.colorScheme.onTertiary, modifier = Modifier.padding(4.dp))
+                    Text(
+                        text = event.category,
+                        color = MaterialTheme.colorScheme.onTertiary,
+                        modifier = Modifier.padding(4.dp)
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                InfoRow(icon = Icons.Default.DateRange, label = "Waktu", value = "${event.date} | ${event.time}")
-                InfoRow(icon = Icons.Default.LocationOn, label = "Lokasi", value = event.location)
-                InfoRow(icon = Icons.Default.Person, label = "Penyelenggara", value = event.organizer)
+                InfoRow(
+                    icon = Icons.Default.DateRange,
+                    label = "Waktu",
+                    value = "${event.date} | ${event.time}"
+                )
+
+                InfoRow(
+                    icon = Icons.Default.LocationOn,
+                    label = "Lokasi",
+                    value = event.location
+                )
+
+                InfoRow(
+                    icon = Icons.Default.Person,
+                    label = "Penyelenggara",
+                    value = event.organizer
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    "Deskripsi Acara",
+                    text = "Deskripsi Acara",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
+
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
-                    event.description,
+                    text = event.description,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                
-                Spacer(modifier = Modifier.height(100.dp)) // Extra space for bottom bar
+
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
     }
 }
 
 @Composable
-fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, value: String) {
+fun InfoRow(
+    icon: ImageVector,
+    label: String,
+    value: String
+) {
     Row(
         modifier = Modifier.padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -122,13 +149,29 @@ fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String
             modifier = Modifier.size(40.dp)
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
+
         Spacer(modifier = Modifier.width(16.dp))
+
         Column {
-            Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(value, style = MaterialTheme.typography.bodyLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

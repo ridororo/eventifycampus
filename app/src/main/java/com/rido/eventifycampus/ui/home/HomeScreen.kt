@@ -1,6 +1,5 @@
 package com.rido.eventifycampus.ui.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,10 +10,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rido.eventifycampus.model.Event
 import com.rido.eventifycampus.ui.components.EventCard
@@ -56,25 +52,26 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            // Search Bar Placeholder
             item {
                 OutlinedTextField(
                     value = "",
                     onValueChange = {},
                     placeholder = { Text("Cari event...") },
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                     shape = RoundedCornerShape(12.dp)
                 )
             }
 
-            // Popular Events Section
             item {
                 Text(
                     "Event Populer",
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
+
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     items(dummyEvents.filter { it.isPopular }) { event ->
                         Box(modifier = Modifier.width(280.dp)) {
@@ -84,7 +81,6 @@ fun HomeScreen(
                 }
             }
 
-            // All Events Section
             item {
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(

@@ -19,8 +19,8 @@ fun CalendarScreen(
     val dummyEvents = remember {
         listOf(
             Event("1", "Seminar Nasional Teknologi", "Deskripsi seminar...", "12 Mei 2024", "09:00", "Aula Gedung A", "Himpunan Mahasiswa", "Seminar"),
-            Event("2", "Lomba Coding Se-Kampus", "Deskripsi lomba...", "15 Mei 2024", "08:00", "Lab Komputer 3", "UKM Programming", "Lomba"),
-            Event("4", "Dies Natalis Campus", "Deskripsi acara...", "25 Mei 2024", "19:00", "Lapangan Utama", "Rektorat", "Hiburan")
+            Event("2", "Lomba Coding Se-Kampus", "Deskripsi lomba...", "20 September 2026", "08:00", "Lab Komputer 3", "UKM Programming", "Lomba"),
+            Event("4", "Dies Natalis Campus", "Deskripsi acara...", "27 November 2026", "19:00", "Lapangan Utama", "Rektorat", "Hiburan")
         )
     }
 
