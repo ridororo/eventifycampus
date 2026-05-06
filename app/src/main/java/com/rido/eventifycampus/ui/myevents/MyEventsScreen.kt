@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rido.eventifycampus.R
 import com.rido.eventifycampus.model.Event
 import com.rido.eventifycampus.ui.components.EventCard
 
@@ -25,12 +26,13 @@ fun MyEventsScreen(
             Event(
                 "1",
                 "Seminar Nasional Teknologi",
-                "Deskripsi seminar...",
-                "12 Mei 2024",
+                "Seminar Nasional Teknologi merupakan acara edukatif yang membahas perkembangan teknologi terkini di era digital.",
+                "12 Mei 2026",
                 "09:00",
                 "Aula Gedung A",
                 "Himpunan Mahasiswa",
                 "Seminar",
+                R.drawable.img,
                 isRegistered = true
             )
         )

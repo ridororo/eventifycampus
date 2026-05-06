@@ -46,12 +46,14 @@ class MainActivity : ComponentActivity() {
             EventifycampusTheme {
                 val navController = rememberNavController()
                 var selectedEvent by remember { mutableStateOf<Event?>(null) }
+                var userName by remember { mutableStateOf("Mahasiswa") }
 
                 NavHost(navController = navController, startDestination = "login") {
 
                     composable("login") {
                         LoginScreen(
-                            onLoginSuccess = {
+                            onLoginSuccess = { name ->
+                                userName = name
                                 navController.navigate("home") {
                                     popUpTo("login") { inclusive = true }
                                 }
@@ -75,6 +77,7 @@ class MainActivity : ComponentActivity() {
 
                     composable("home") {
                         MainScreenContainer(
+                            userName = userName,
                             onEventClick = { event ->
                                 selectedEvent = event
                                 navController.navigate("detail")
@@ -165,6 +168,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreenContainer(
+    userName: String,
     onEventClick: (Event) -> Unit,
     onLogout: () -> Unit
 ) {
@@ -204,10 +208,26 @@ fun MainScreenContainer(
         val modifier = Modifier.padding(innerPadding)
 
         when (selectedItem) {
-            0 -> HomeScreen(modifier = modifier, onEventClick = onEventClick)
-            1 -> CalendarScreen(modifier = modifier, onEventClick = onEventClick)
-            2 -> MyEventsScreen(modifier = modifier, onEventClick = onEventClick)
-            3 -> ProfileScreen(modifier = modifier, onLogoutClick = onLogout)
+            0 -> HomeScreen(
+                modifier = modifier,
+                userName = userName,
+                onEventClick = onEventClick
+            )
+
+            1 -> CalendarScreen(
+                modifier = modifier,
+                onEventClick = onEventClick
+            )
+
+            2 -> MyEventsScreen(
+                modifier = modifier,
+                onEventClick = onEventClick
+            )
+
+            3 -> ProfileScreen(
+                modifier = modifier,
+                onLogoutClick = onLogout
+            )
         }
     }
 }

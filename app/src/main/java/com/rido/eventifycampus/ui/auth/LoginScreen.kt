@@ -18,13 +18,14 @@ import com.rido.eventifycampus.data.AuthRepository
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (String) -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    
+
     val context = LocalContext.current
     val repository = remember { AuthRepository() }
 
@@ -40,6 +41,7 @@ fun LoginScreen(
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.primary
         )
+
         Text(
             text = "Login to your account",
             style = MaterialTheme.typography.bodyLarge,
@@ -49,9 +51,20 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("Nama") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            enabled = !isLoading
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email", style = MaterialTheme.typography.labelLarge) },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true,
@@ -63,7 +76,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password", style = MaterialTheme.typography.labelLarge) },
+            label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -78,11 +91,16 @@ fun LoginScreen(
         } else {
             Button(
                 onClick = {
+                    if (name.isBlank()) {
+                        Toast.makeText(context, "Nama wajib diisi", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
                     isLoading = true
                     repository.login(email, password) { success, error ->
                         isLoading = false
                         if (success) {
-                            onLoginSuccess()
+                            onLoginSuccess(name.trim())
                         } else {
                             Toast.makeText(context, error ?: "Login gagal", Toast.LENGTH_SHORT).show()
                         }
@@ -93,20 +111,21 @@ fun LoginScreen(
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Login", style = MaterialTheme.typography.labelLarge)
+                Text("Login")
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Row {
-            Text("Don't have an account? ", style = MaterialTheme.typography.bodyMedium)
+            Text("Don't have an account? ")
             Text(
                 text = "Register",
-                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable(enabled = !isLoading) { onNavigateToRegister() }
+                modifier = Modifier.clickable(enabled = !isLoading) {
+                    onNavigateToRegister()
+                }
             )
         }
     }

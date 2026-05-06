@@ -9,7 +9,7 @@ data class Event(
     val location: String,
     val organizer: String,
     val category: String,
-    val imageUrl: String = "",
+    val imageRes: Int,
     val isPopular: Boolean = false,
     val isRegistered: Boolean = false
 )

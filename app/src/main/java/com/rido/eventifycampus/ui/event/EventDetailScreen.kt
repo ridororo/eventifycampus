@@ -1,6 +1,6 @@
 package com.rido.eventifycampus.ui.event
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +14,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rido.eventifycampus.model.Event
@@ -61,18 +64,14 @@ fun EventDetailScreen(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            Box(
+            Image(
+                painter = painterResource(id = event.imageRes),
+                contentDescription = event.title,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
-                    .background(MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Event Header Image",
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
+                    .height(260.dp),
+                contentScale = ContentScale.Crop
+            )
 
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
