@@ -11,7 +11,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,10 +26,35 @@ import com.rido.eventifycampus.model.Event
 @Composable
 fun EventDetailScreen(
     event: Event,
+    isFinished: Boolean = false,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit,
+    onCompleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showConfirmDialog by remember { mutableStateOf(false) }
+
+    if (showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            title = { Text("Konfirmasi") },
+            text = { Text("Apakah kamu ingin menyelesaikan acara ini? Acara akan dipindahkan ke tab Selesai.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showConfirmDialog = false
+                    onCompleteClick()
+                }) {
+                    Text("Ya, Selesai")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showConfirmDialog = false }) {
+                    Text("Batal")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,19 +67,27 @@ fun EventDetailScreen(
             )
         },
         bottomBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shadowElevation = 8.dp
-            ) {
-                Button(
-                    onClick = onRegisterClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(56.dp),
-                    shape = RoundedCornerShape(12.dp)
+            if (!isFinished) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shadowElevation = 8.dp
                 ) {
-                    Text(if (event.isRegistered) "Sudah Terdaftar" else "Daftar Sekarang")
+                    Button(
+                        onClick = {
+                            if (event.isRegistered) {
+                                showConfirmDialog = true
+                            } else {
+                                onRegisterClick()
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(56.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(if (event.isRegistered) "Tandai Selesai" else "Daftar Sekarang")
+                    }
                 }
             }
         }

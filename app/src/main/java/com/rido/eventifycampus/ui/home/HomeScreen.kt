@@ -21,7 +21,8 @@ import com.rido.eventifycampus.ui.components.EventCard
 fun HomeScreen(
     modifier: Modifier = Modifier,
     userName: String,
-    onEventClick: (Event) -> Unit
+    onEventClick: (Event) -> Unit,
+    onNotificationClick: () -> Unit
 ) {
     var searchText by remember { mutableStateOf("") }
 
@@ -126,7 +127,7 @@ fun HomeScreen(
                     )
                 }
 
-                IconButton(onClick = {}) {
+                IconButton(onClick = onNotificationClick) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = "Notifikasi"
