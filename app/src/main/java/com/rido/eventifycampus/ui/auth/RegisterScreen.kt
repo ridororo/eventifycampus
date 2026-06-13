@@ -121,12 +121,19 @@ fun RegisterScreen(
         } else {
             Button(
                 onClick = {
+                    if (name.isBlank() || email.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "Semua field wajib diisi", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+                
                     if (password != confirmPassword) {
                         Toast.makeText(context, "Password tidak cocok", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
+                
                     isLoading = true
                     val user = User(name = name, email = email, nim = nim)
+                
                     repository.register(user, password) { success, error ->
                         isLoading = false
                         if (success) {
