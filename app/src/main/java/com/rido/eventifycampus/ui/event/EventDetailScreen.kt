@@ -43,14 +43,14 @@ fun EventDetailScreen(
     if (showConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
-            title = { Text("Konfirmasi") },
-            text = { Text("Apakah kamu ingin menyelesaikan acara ini? Acara akan dipindahkan ke tab Selesai.") },
+            title = { Text("Konfirmasi Selesai") },
+            text = { Text("Apakah kamu sudah mengikuti acara ini? Event akan dipindahkan ke daftar Selesai.") },
             confirmButton = {
-                TextButton(onClick = {
+                Button(onClick = {
                     showConfirmDialog = false
                     onCompleteClick()
                 }) {
-                    Text("Ya, Selesai")
+                    Text("Ya, Selesaikan")
                 }
             },
             dismissButton = {
@@ -114,9 +114,13 @@ fun EventDetailScreen(
                             modifier = Modifier
                                 .weight(if (event.isRegistered) 1f else 2f)
                                 .height(56.dp),
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(12.dp),
+                            colors = if (event.isRegistered) 
+                                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
+                                else ButtonDefaults.buttonColors()
                         ) {
-                            Text(if (event.isRegistered) "Tandai Selesai" else "Daftar Sekarang")
+                            // Perubahan teks tombol sesuai permintaan
+                            Text(if (event.isRegistered) "Selesaikan Event" else "Daftar Sekarang")
                         }
                     }
                 }

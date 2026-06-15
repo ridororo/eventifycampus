@@ -48,7 +48,7 @@ fun BiodataScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Isi Biodata") },
+                title = { Text("Lengkapi Biodata") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -68,7 +68,7 @@ fun BiodataScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "Daftar Event: $eventTitle",
+                text = "Pendaftaran Acara: $eventTitle",
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -99,7 +99,7 @@ fun BiodataScreen(
             OutlinedTextField(
                 value = noHp,
                 onValueChange = { noHp = it },
-                label = { Text("No HP") },
+                label = { Text("Nomor HP") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
@@ -114,7 +114,7 @@ fun BiodataScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = isFormValid
             ) {
-                Text("Submit Pendaftaran")
+                Text("Kirim Pendaftaran")
             }
         }
     }

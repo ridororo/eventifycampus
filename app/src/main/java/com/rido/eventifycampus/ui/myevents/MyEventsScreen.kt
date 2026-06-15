@@ -24,7 +24,7 @@ fun MyEventsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Event Saya") })
+            TopAppBar(title = { Text("Acara Saya") })
         }
     ) { padding ->
         Column(modifier = modifier.padding(padding)) {
@@ -39,7 +39,7 @@ fun MyEventsScreen(
             }
 
             val currentList = if (selectedTab == 0) registeredEvents else finishedEvents
-            val emptyMessage = if (selectedTab == 0) "Belum ada event yang didaftar." else "Belum ada event yang selesai."
+            val emptyMessage = if (selectedTab == 0) "Belum ada acara yang didaftarkan." else "Belum ada acara yang diselesaikan."
 
             if (currentList.isEmpty()) {
                 Box(

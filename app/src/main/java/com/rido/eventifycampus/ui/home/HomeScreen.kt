@@ -13,7 +13,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rido.eventifycampus.R
 import com.rido.eventifycampus.model.Event
 import com.rido.eventifycampus.ui.components.EventCard
 
@@ -21,78 +20,16 @@ import com.rido.eventifycampus.ui.components.EventCard
 fun HomeScreen(
     modifier: Modifier = Modifier,
     userName: String,
+    events: List<Event>,
     onEventClick: (Event) -> Unit,
     onNotificationClick: () -> Unit
 ) {
     var searchText by remember { mutableStateOf("") }
 
-    val dummyEvents = remember {
-        listOf(
-            Event(
-                "1",
-                "Seminar Nasional Teknologi",
-                "Seminar Nasional Teknologi merupakan acara edukatif yang membahas perkembangan teknologi terkini di era digital.",
-                "12 Mei 2026",
-                "09:00",
-                "Aula Gedung A",
-                "Himpunan Mahasiswa",
-                "Seminar",
-                R.drawable.img,
-                isPopular = true
-            ),
-            Event(
-                "2",
-                "Lomba Coding Se-Kampus",
-                "Lomba Coding Se-Kampus adalah kompetisi pemrograman yang menguji logika dan kreativitas mahasiswa.",
-                "20 Agustus 2026",
-                "08:00",
-                "Lab Komputer 3",
-                "UKM Programming",
-                "Lomba",
-                R.drawable.img_1
-            ),
-            Event(
-                "3",
-                "Workshop UI/UX Design",
-                "Workshop UI/UX Design membahas desain antarmuka dan pengalaman pengguna.",
-                "28 November 2026",
-                "13:00",
-                "Gedung Serbaguna",
-                "Creative Community",
-                "Workshop",
-                R.drawable.img_2,
-                isPopular = true
-            ),
-            Event(
-                "4",
-                "Dies Natalis Campus",
-                "Dies Natalis Campus merupakan perayaan hari jadi kampus dengan hiburan dan seni.",
-                "28 November 2026",
-                "19:00",
-                "Lapangan Utama",
-                "Rektorat",
-                "Hiburan",
-                R.drawable.img_3,
-                isPopular = true
-            ),
-            Event(
-                "5",
-                "Talkshow Karier Digital",
-                "Talkshow Karier Digital membahas peluang kerja teknologi dan persiapan karier mahasiswa.",
-                "10 Desember 2026",
-                "10:00",
-                "Auditorium Kampus",
-                "Career Development Center",
-                "Talkshow",
-                R.drawable.img_4
-            )
-        )
-    }
-
     val filteredEvents = if (searchText.isBlank()) {
-        dummyEvents
+        events
     } else {
-        dummyEvents.filter { event ->
+        events.filter { event ->
             event.title.contains(searchText, ignoreCase = true) ||
                     event.description.contains(searchText, ignoreCase = true) ||
                     event.category.contains(searchText, ignoreCase = true) ||
@@ -160,20 +97,23 @@ fun HomeScreen(
         if (searchText.isBlank()) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Event Populer",
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                val popularEvents = events.filter { it.isPopular }
+                if (popularEvents.isNotEmpty()) {
+                    Text(
+                        text = "Event Populer",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    items(dummyEvents.filter { it.isPopular }) { event ->
-                        Box(modifier = Modifier.width(280.dp)) {
-                            EventCard(
-                                event = event,
-                                onClick = { onEventClick(event) }
-                            )
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        items(popularEvents) { event ->
+                            Box(modifier = Modifier.width(280.dp)) {
+                                EventCard(
+                                    event = event,
+                                    onClick = { onEventClick(event) }
+                                )
+                            }
                         }
                     }
                 }

@@ -1,6 +1,10 @@
 package com.rido.eventifycampus.ui.profile
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -16,11 +20,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.rido.eventifycampus.data.ProfileRepository
 import com.rido.eventifycampus.model.User
 
@@ -40,6 +47,23 @@ fun ProfileScreen(
     // Form states
     var editName by remember { mutableStateOf("") }
     var editNim by remember { mutableStateOf("") }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            isLoading = true
+            repository.uploadProfileImage(it) { success, result ->
+                isLoading = false
+                if (success) {
+                    user = user?.copy(profileImageUrl = result)
+                    Toast.makeText(context, "Foto profil berhasil diganti!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, result ?: "Gagal mengunggah foto", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         repository.getUserProfile { fetchedUser ->
@@ -77,23 +101,38 @@ fun ProfileScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Profile Image Placeholder
-                Surface(
-                    modifier = Modifier.size(120.dp),
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                // Tampilan Foto Profil
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    if (user?.profileImageUrl != null) {
+                        AsyncImage(
+                            model = user?.profileImageUrl,
+                            contentDescription = "Foto Profil",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
                         Icon(
                             Icons.Default.Person,
-                            contentDescription = null,
-                            modifier = Modifier.size(60.dp),
+                            contentDescription = "Ikon Profil Default",
+                            modifier = Modifier.size(60.dp).align(Alignment.Center),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                TextButton(
+                    onClick = { launcher.launch("image/*") },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Ganti Foto Profil")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 if (isEditing) {
                     OutlinedTextField(
@@ -122,9 +161,9 @@ fun ProfileScreen(
                                     if (success) {
                                         user = updatedUser
                                         isEditing = false
-                                        Toast.makeText(context, "Profil diperbarui!", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Profil berhasil diperbarui!", Toast.LENGTH_SHORT).show()
                                     } else {
-                                        Toast.makeText(context, error ?: "Gagal update", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, error ?: "Gagal memperbarui profil", Toast.LENGTH_SHORT).show()
                                     }
                                 }
                             }
@@ -138,12 +177,12 @@ fun ProfileScreen(
                     }
                 } else {
                     Text(
-                        text = user?.name ?: "Nama tidak ada",
+                        text = user?.name ?: "Nama tidak tersedia",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = user?.email ?: "Email tidak ada",
+                        text = user?.email ?: "Email tidak tersedia",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -166,7 +205,7 @@ fun ProfileScreen(
 
                     ProfileMenuItem(
                         icon = Icons.Default.Edit,
-                        title = "Edit Profil",
+                        title = "Edit Nama & NIM",
                         onClick = { isEditing = true }
                     )
                     ProfileMenuItem(

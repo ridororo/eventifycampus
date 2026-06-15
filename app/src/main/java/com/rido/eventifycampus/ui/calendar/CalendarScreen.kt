@@ -32,27 +32,12 @@ import java.util.*
 @Composable
 fun CalendarScreen(
     modifier: Modifier = Modifier,
+    events: List<Event>,
     onEventClick: (Event) -> Unit
 ) {
-    val events = remember {
-        listOf(
-
-            Event("1", "Seminar Nasional Teknologi", "Seminar nasional tentang teknologi digital.", "12 Mei 2026", "09:00", "Aula Gedung A", "Himpunan Mahasiswa", "Seminar", R.drawable.img),
-            Event("2", "Lomba Coding Se-Kampus", "Kompetisi pemrograman antar mahasiswa.", "20 Agustus 2026", "08:00", "Lab Komputer 3", "UKM Programming", "Lomba", R.drawable.img_1),
-            Event("3", "Workshop UI/UX Design", "Pelatihan desain UI/UX untuk pemula.", "28 November 2026", "13:00", "Gedung Serbaguna", "Creative Community", "Workshop", R.drawable.img_2),
-            Event("4", "Dies Natalis Campus", "Perayaan hari jadi kampus.", "28 November 2026", "19:00", "Lapangan Utama", "Rektorat", "Hiburan", R.drawable.img_3),
-            Event("5", "Talkshow Karier Digital", "Talkshow karier dan portofolio digital.", "10 Desember 2026", "10:00", "Auditorium Kampus", "Career Development Center", "Talkshow", R.drawable.img_4),
-            
-
-            Event("6", "AI Conference 2027", "Konferensi Artificial Intelligence global.", "15 Maret 2027", "10:00", "Grand Ballroom", "Tech Institute", "Seminar", R.drawable.img),
-            Event("7", "Hackathon Merdeka 2027", "Lomba hackathon tingkat nasional.", "17 Agustus 2027", "09:00", "Digital Hub", "UKM Programming", "Lomba", R.drawable.img_1),
-            Event("8", "Gala Musik Kampus 2028", "Konser musik akhir tahun kampus.", "20 Desember 2028", "19:00", "Stadion Kampus", "BEM Universitas", "Hiburan", R.drawable.img_3)
-        )
-    }
-
-
+    // Set default ke 2026 dan bulan Mei (agar langsung terlihat salah satu data dummy)
     var currentYear by remember { mutableIntStateOf(2026) }
-    var currentMonthIndex by remember { mutableIntStateOf(Calendar.MAY) } // Mei (index 4) agar langsung terlihat event pertama
+    var currentMonthIndex by remember { mutableIntStateOf(Calendar.MAY) }
 
     val monthNames = listOf(
         "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -181,7 +166,7 @@ fun CalendarGrid(
     }
     
     val totalDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-    val startOffset = calendar.get(Calendar.DAY_OF_WEEK) - 1 // 0 for Sunday
+    val startOffset = calendar.get(Calendar.DAY_OF_WEEK) - 1
 
     Column {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -280,14 +265,27 @@ fun CalendarEventCard(
             modifier = Modifier.padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = event.imageRes),
-                contentDescription = event.title,
-                modifier = Modifier
-                    .size(86.dp)
-                    .clip(RoundedCornerShape(18.dp)),
-                contentScale = ContentScale.Crop
-            )
+            // Using a default icon if imageRes is 0 or invalid for compose
+            if (event.imageRes != 0) {
+                Image(
+                    painter = painterResource(id = event.imageRes),
+                    contentDescription = event.title,
+                    modifier = Modifier
+                        .size(86.dp)
+                        .clip(RoundedCornerShape(18.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(86.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.DateRange, contentDescription = null)
+                }
+            }
 
             Spacer(modifier = Modifier.width(14.dp))
 

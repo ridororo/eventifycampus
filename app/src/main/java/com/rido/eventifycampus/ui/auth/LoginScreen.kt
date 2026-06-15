@@ -37,13 +37,13 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Welcome Back!",
+            text = "Selamat Datang!",
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.primary
         )
 
         Text(
-            text = "Login to your account",
+            text = "Masuk ke akun Anda",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -53,7 +53,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Nama") },
+            label = { Text("Nama Lengkap") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             enabled = !isLoading
@@ -76,7 +76,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text("Kata Sandi") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -102,7 +102,7 @@ fun LoginScreen(
                         if (success) {
                             onLoginSuccess(name.trim())
                         } else {
-                            Toast.makeText(context, error ?: "Login gagal", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, error ?: "Masuk gagal", Toast.LENGTH_SHORT).show()
                         }
                     }
                 },
@@ -111,16 +111,16 @@ fun LoginScreen(
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Login")
+                Text("Masuk")
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Row {
-            Text("Don't have an account? ")
+            Text("Belum punya akun? ")
             Text(
-                text = "Register",
+                text = "Daftar",
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable(enabled = !isLoading) {
