@@ -33,6 +33,7 @@ import com.rido.eventifycampus.ui.home.HomeScreen
 import com.rido.eventifycampus.ui.myevents.MyEventsScreen
 import com.rido.eventifycampus.ui.notification.NotificationScreen
 import com.rido.eventifycampus.ui.profile.ProfileScreen
+import com.rido.eventifycampus.ui.splash.SplashScreen
 import com.rido.eventifycampus.ui.theme.EventifycampusTheme
 
 class MainActivity : ComponentActivity() {
@@ -53,14 +54,25 @@ class MainActivity : ComponentActivity() {
                 var selectedEvent by remember { mutableStateOf<Event?>(null) }
                 var userName by remember { mutableStateOf("Mahasiswa") }
 
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "splash") {
+
+                    composable("splash") {
+                        SplashScreen(
+                            onNavigateToLogin = {
+                                navController.navigate("login")
+                            },
+                            onNavigateToRegister = {
+                                navController.navigate("register")
+                            }
+                        )
+                    }
 
                     composable("login") {
                         LoginScreen(
                             onLoginSuccess = { name ->
                                 userName = name
                                 navController.navigate("home") {
-                                    popUpTo("login") { inclusive = true }
+                                    popUpTo("splash") { inclusive = true }
                                 }
                             },
                             onNavigateToRegister = {
@@ -94,7 +106,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("notifications")
                             },
                             onLogout = {
-                                navController.navigate("login") {
+                                navController.navigate("splash") {
                                     popUpTo(0)
                                 }
                             }
