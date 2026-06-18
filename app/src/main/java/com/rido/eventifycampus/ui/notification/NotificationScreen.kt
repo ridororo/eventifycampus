@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.rido.eventifycampus.model.AppNotification
 
@@ -22,25 +21,25 @@ fun NotificationScreen(
     onBackClick: () -> Unit,
     onDeleteAllClick: () -> Unit
 ) {
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    val showDeleteDialog = remember { mutableStateOf(false) }
 
-    if (showDeleteDialog) {
+    if (showDeleteDialog.value) {
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
+            onDismissRequest = { showDeleteDialog.value = false },
             title = { Text("Hapus Semua Notifikasi") },
             text = { Text("Apakah kamu yakin ingin menghapus semua riwayat notifikasi?") },
             confirmButton = {
                 TextButton(
                     onClick = {
                         onDeleteAllClick()
-                        showDeleteDialog = false
+                        showDeleteDialog.value = false
                     }
                 ) {
                     Text("Hapus", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
+                TextButton(onClick = { showDeleteDialog.value = false }) {
                     Text("Batal")
                 }
             }
@@ -58,7 +57,7 @@ fun NotificationScreen(
                 },
                 actions = {
                     if (notifications.isNotEmpty()) {
-                        IconButton(onClick = { showDeleteDialog = true }) {
+                        IconButton(onClick = { showDeleteDialog.value = true }) {
                             Icon(Icons.Default.Delete, contentDescription = "Hapus Semua")
                         }
                     }
