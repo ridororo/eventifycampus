@@ -43,12 +43,12 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Create Account",
+            text = "Buat Akun",
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = "Join Eventify Campus",
+            text = "Gabung dengan Eventify Campus",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -58,7 +58,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Full Name", style = MaterialTheme.typography.labelLarge) },
+            label = { Text("Nama Lengkap", style = MaterialTheme.typography.labelLarge) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             enabled = !isLoading
@@ -81,7 +81,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = nim,
             onValueChange = { nim = it },
-            label = { Text("NIM (Optional)", style = MaterialTheme.typography.labelLarge) },
+            label = { Text("NIM (Opsional)", style = MaterialTheme.typography.labelLarge) },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
@@ -93,7 +93,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password", style = MaterialTheme.typography.labelLarge) },
+            label = { Text("Kata Sandi", style = MaterialTheme.typography.labelLarge) },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -106,7 +106,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password", style = MaterialTheme.typography.labelLarge) },
+            label = { Text("Konfirmasi Kata Sandi", style = MaterialTheme.typography.labelLarge) },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -121,12 +121,19 @@ fun RegisterScreen(
         } else {
             Button(
                 onClick = {
-                    if (password != confirmPassword) {
-                        Toast.makeText(context, "Password tidak cocok", Toast.LENGTH_SHORT).show()
+                    if (name.isBlank() || email.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "Semua kolom wajib diisi", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
+                
+                    if (password != confirmPassword) {
+                        Toast.makeText(context, "Kata sandi tidak cocok", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+                
                     isLoading = true
                     val user = User(name = name, email = email, nim = nim)
+                
                     repository.register(user, password) { success, error ->
                         isLoading = false
                         if (success) {
@@ -142,16 +149,16 @@ fun RegisterScreen(
                     .height(56.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Register", style = MaterialTheme.typography.labelLarge)
+                Text("Daftar", style = MaterialTheme.typography.labelLarge)
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Row {
-            Text("Already have an account? ", style = MaterialTheme.typography.bodyMedium)
+            Text("Sudah punya akun? ", style = MaterialTheme.typography.bodyMedium)
             Text(
-                text = "Login",
+                text = "Masuk",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,

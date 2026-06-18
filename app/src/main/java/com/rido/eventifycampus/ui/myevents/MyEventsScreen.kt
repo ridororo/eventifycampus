@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rido.eventifycampus.R
 import com.rido.eventifycampus.model.Event
 import com.rido.eventifycampus.ui.components.EventCard
 
@@ -16,31 +15,16 @@ import com.rido.eventifycampus.ui.components.EventCard
 @Composable
 fun MyEventsScreen(
     modifier: Modifier = Modifier,
+    registeredEvents: List<Event>,
+    finishedEvents: List<Event>,
     onEventClick: (Event) -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Akan Datang", "Selesai")
 
-    val registeredEvents = remember {
-        listOf(
-            Event(
-                "1",
-                "Seminar Nasional Teknologi",
-                "Seminar Nasional Teknologi merupakan acara edukatif yang membahas perkembangan teknologi terkini di era digital.",
-                "12 Mei 2026",
-                "09:00",
-                "Aula Gedung A",
-                "Himpunan Mahasiswa",
-                "Seminar",
-                R.drawable.img,
-                isRegistered = true
-            )
-        )
-    }
-
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Event Saya") })
+            TopAppBar(title = { Text("Acara Saya") })
         }
     ) { padding ->
         Column(modifier = modifier.padding(padding)) {
@@ -54,21 +38,26 @@ fun MyEventsScreen(
                 }
             }
 
-            LazyColumn(modifier = Modifier.padding(16.dp)) {
-                if (selectedTab == 0) {
-                    items(registeredEvents) { event ->
+            val currentList = if (selectedTab == 0) registeredEvents else finishedEvents
+            val emptyMessage = if (selectedTab == 0) "Belum ada acara yang didaftarkan." else "Belum ada acara yang diselesaikan."
+
+            if (currentList.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(emptyMessage)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(currentList) { event ->
                         EventCard(event = event, onClick = { onEventClick(event) })
-                    }
-                } else {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 40.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Belum ada event yang selesai.")
-                        }
                     }
                 }
             }

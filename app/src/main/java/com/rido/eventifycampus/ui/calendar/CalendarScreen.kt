@@ -26,29 +26,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.rido.eventifycampus.R
 import com.rido.eventifycampus.model.Event
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarScreen(
     modifier: Modifier = Modifier,
+    events: List<Event>,
     onEventClick: (Event) -> Unit
 ) {
-    val events = remember {
-        listOf(
-            Event("1", "Seminar Nasional Teknologi", "Seminar nasional tentang teknologi digital.", "12 Mei 2026", "09:00", "Aula Gedung A", "Himpunan Mahasiswa", "Seminar", R.drawable.img),
-            Event("2", "Lomba Coding Se-Kampus", "Kompetisi pemrograman antar mahasiswa.", "20 Agustus 2026", "08:00", "Lab Komputer 3", "UKM Programming", "Lomba", R.drawable.img_1),
-            Event("3", "Workshop UI/UX Design", "Pelatihan desain UI/UX untuk pemula.", "28 November 2026", "13:00", "Gedung Serbaguna", "Creative Community", "Workshop", R.drawable.img_2),
-            Event("4", "Dies Natalis Campus", "Perayaan hari jadi kampus.", "28 November 2026", "19:00", "Lapangan Utama", "Rektorat", "Hiburan", R.drawable.img_3),
-            Event("5", "Talkshow Karier Digital", "Talkshow karier dan portofolio digital.", "10 Desember 2026", "10:00", "Auditorium Kampus", "Career Development Center", "Talkshow", R.drawable.img_4)
-        )
-    }
+    // Set default ke 2026 dan bulan Mei (agar langsung terlihat salah satu data dummy)
+    var currentYear by remember { mutableIntStateOf(2026) }
+    var currentMonthIndex by remember { mutableIntStateOf(Calendar.MAY) }
 
-    val months = listOf("Mei", "Agustus", "November", "Desember")
-    var selectedMonthIndex by remember { mutableIntStateOf(0) }
-    val selectedMonth = months[selectedMonthIndex]
+    val monthNames = listOf(
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    )
+
+    val selectedMonthName = monthNames[currentMonthIndex]
 
     val selectedEvents = events.filter {
-        it.date.contains(selectedMonth, ignoreCase = true)
+        it.date.contains(selectedMonthName, ignoreCase = true) && it.date.contains(currentYear.toString())
     }
 
     val eventDays = selectedEvents.mapNotNull { getDayFromDate(it.date) }
@@ -86,21 +85,31 @@ fun CalendarScreen(
                         ) {
                             IconButton(
                                 onClick = {
-                                    if (selectedMonthIndex > 0) selectedMonthIndex--
+                                    if (currentMonthIndex == 0) {
+                                        currentMonthIndex = 11
+                                        currentYear--
+                                    } else {
+                                        currentMonthIndex--
+                                    }
                                 }
                             ) {
                                 Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Sebelumnya")
                             }
 
                             Text(
-                                text = "$selectedMonth 2026",
+                                text = "$selectedMonthName $currentYear",
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
 
                             IconButton(
                                 onClick = {
-                                    if (selectedMonthIndex < months.lastIndex) selectedMonthIndex++
+                                    if (currentMonthIndex == 11) {
+                                        currentMonthIndex = 0
+                                        currentYear++
+                                    } else {
+                                        currentMonthIndex++
+                                    }
                                 }
                             ) {
                                 Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Berikutnya")
@@ -110,7 +119,8 @@ fun CalendarScreen(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         CalendarGrid(
-                            selectedMonth = selectedMonth,
+                            year = currentYear,
+                            month = currentMonthIndex,
                             eventDays = eventDays
                         )
                     }
@@ -119,7 +129,7 @@ fun CalendarScreen(
 
             item {
                 Text(
-                    text = "Event Bulan $selectedMonth",
+                    text = "Event $selectedMonthName $currentYear",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -143,26 +153,20 @@ fun CalendarScreen(
 
 @Composable
 fun CalendarGrid(
-    selectedMonth: String,
+    year: Int,
+    month: Int,
     eventDays: List<Int>
 ) {
-    val daysOfWeek = listOf("Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min")
-
-    val totalDays = when (selectedMonth) {
-        "Mei" -> 31
-        "Agustus" -> 31
-        "November" -> 30
-        "Desember" -> 31
-        else -> 30
+    val daysOfWeek = listOf("Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab")
+    
+    val calendar = Calendar.getInstance().apply {
+        set(Calendar.YEAR, year)
+        set(Calendar.MONTH, month)
+        set(Calendar.DAY_OF_MONTH, 1)
     }
-
-    val startOffset = when (selectedMonth) {
-        "Mei" -> 4
-        "Agustus" -> 6
-        "November" -> 0
-        "Desember" -> 1
-        else -> 0
-    }
+    
+    val totalDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val startOffset = calendar.get(Calendar.DAY_OF_WEEK) - 1
 
     Column {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -185,7 +189,7 @@ fun CalendarGrid(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 6.dp)
+                    .padding(vertical = 4.dp)
             ) {
                 week.forEach { day ->
                     CalendarDayItem(
@@ -261,14 +265,27 @@ fun CalendarEventCard(
             modifier = Modifier.padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = event.imageRes),
-                contentDescription = event.title,
-                modifier = Modifier
-                    .size(86.dp)
-                    .clip(RoundedCornerShape(18.dp)),
-                contentScale = ContentScale.Crop
-            )
+            // Using a default icon if imageRes is 0 or invalid for compose
+            if (event.imageRes != 0) {
+                Image(
+                    painter = painterResource(id = event.imageRes),
+                    contentDescription = event.title,
+                    modifier = Modifier
+                        .size(86.dp)
+                        .clip(RoundedCornerShape(18.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(86.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(Icons.Default.DateRange, contentDescription = null)
+                }
+            }
 
             Spacer(modifier = Modifier.width(14.dp))
 

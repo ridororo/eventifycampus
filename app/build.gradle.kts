@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.rido.eventifycampus"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -55,6 +55,13 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.storage.ktx)
+
+    // Image Loading
+    implementation(libs.coil.compose)
+
+    // QR Code
+    implementation(libs.zxing.core)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
