@@ -37,9 +37,12 @@ fun EventDetailScreen(
     onCompleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // State untuk mengontrol muncul/tidaknya dialog konfirmasi selesai
     var showConfirmDialog by remember { mutableStateOf(false) }
+    // State untuk mengontrol muncul/tidaknya pop-up tiket QR
     var showTicketDialog by remember { mutableStateOf(false) }
 
+    // Dialog Konfirmasi: Muncul saat user klik 'Selesaikan Event'
     if (showConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
@@ -48,7 +51,7 @@ fun EventDetailScreen(
             confirmButton = {
                 Button(onClick = {
                     showConfirmDialog = false
-                    onCompleteClick()
+                    onCompleteClick() // Menjalankan logika update status di ViewModel
                 }) {
                     Text("Ya, Selesaikan")
                 }
@@ -61,6 +64,7 @@ fun EventDetailScreen(
         )
     }
 
+    // Dialog Tiket: Menampilkan QR Code sebagai tiket digital
     if (showTicketDialog) {
         TicketDialog(
             event = event,
@@ -80,6 +84,7 @@ fun EventDetailScreen(
             )
         },
         bottomBar = {
+            // Tombol aksi hanya muncul jika event belum selesai diikuti
             if (!isFinished) {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -91,6 +96,7 @@ fun EventDetailScreen(
                             .padding(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        // Jika sudah daftar, tampilkan tombol untuk melihat tiket
                         if (event.isRegistered) {
                             OutlinedButton(
                                 onClick = { showTicketDialog = true },
@@ -103,12 +109,13 @@ fun EventDetailScreen(
                             }
                         }
 
+                        // Tombol dinamis: Bisa jadi 'Daftar' atau 'Selesaikan'
                         Button(
                             onClick = {
                                 if (event.isRegistered) {
-                                    showConfirmDialog = true
+                                    showConfirmDialog = true // Jika sudah daftar, buka dialog konfirmasi selesai
                                 } else {
-                                    onRegisterClick()
+                                    onRegisterClick() // Jika belum daftar, arahkan ke form biodata
                                 }
                             },
                             modifier = Modifier
@@ -119,7 +126,6 @@ fun EventDetailScreen(
                                 ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                                 else ButtonDefaults.buttonColors()
                         ) {
-                            // Perubahan teks tombol sesuai permintaan
                             Text(if (event.isRegistered) "Selesaikan Event" else "Daftar Sekarang")
                         }
                     }
@@ -130,8 +136,9 @@ fun EventDetailScreen(
         Column(
             modifier = modifier
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()) // Supaya halaman bisa di-scroll
         ) {
+            // Banner gambar event
             Image(
                 painter = painterResource(id = event.imageRes),
                 contentDescription = event.title,
@@ -142,6 +149,7 @@ fun EventDetailScreen(
             )
 
             Column(modifier = Modifier.padding(20.dp)) {
+                // Judul dan Kategori
                 Text(
                     text = event.title,
                     style = MaterialTheme.typography.displayLarge,
@@ -160,6 +168,7 @@ fun EventDetailScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                // Detail informasi menggunakan komponen baris (InfoRow)
                 InfoRow(
                     icon = Icons.Default.DateRange,
                     label = "Waktu",
@@ -194,6 +203,7 @@ fun EventDetailScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
+                // Kartu status pendaftaran dan QR Code
                 if (event.isRegistered) {
                     Spacer(modifier = Modifier.height(32.dp))
                     Card(
@@ -221,6 +231,7 @@ fun EventDetailScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             
+                            // Generasi QR Code berdasarkan ID Tiket unik
                             val qrBitmap = remember(event.id) {
                                 QRCodeGenerator.generateQRCode("TICKET-${event.id}-${event.title}")
                             }

@@ -30,24 +30,31 @@ class EventViewModel : ViewModel() {
     }
 
     private fun fetchData() {
+        // Mengambil daftar semua event
         repository.getEvents { events ->
             _allEvents.clear()
             _allEvents.addAll(events)
             
-            // Selalu panggil seed agar data di Firebase sinkron dengan data Indonesia
-            seedInitialData()
+            // LOGIKA PERBAIKAN: 
+            // Hanya isi data dummy jika di Firebase benar-benar kosong (0 event)
+            if (events.isEmpty()) {
+                seedInitialData()
+            }
         }
 
+        // Mengambil event yang didaftar oleh user
         repository.getRegisteredEvents { events ->
             _registeredEvents.clear()
             _registeredEvents.addAll(events)
         }
 
+        // Mengambil event yang sudah diselesaikan
         repository.getFinishedEvents { events ->
             _finishedEvents.clear()
             _finishedEvents.addAll(events)
         }
 
+        // Mengambil daftar notifikasi
         repository.getNotifications { notifications ->
             _notifications.clear()
             _notifications.addAll(notifications)
@@ -79,47 +86,12 @@ class EventViewModel : ViewModel() {
                 category = "Workshop",
                 imageRes = R.drawable.img_1,
                 isPopular = false
-            ),
-            Event(
-                id = "3",
-                title = "Kampus Expo 2026",
-                description = "Pameran karya inovasi mahasiswa dan bursa kerja perusahaan ternama.",
-                date = "22 Juli 2026",
-                time = "08:00 - 17:00",
-                location = "Lapangan Utama",
-                organizer = "BEM Universitas",
-                category = "Pameran",
-                imageRes = R.drawable.img_2,
-                isPopular = true
-            ),
-            Event(
-                id = "4",
-                title = "Kompetisi Pemrograman",
-                description = "Tantangan 24 jam membangun solusi digital kreatif untuk masalah sosial.",
-                date = "05 Agustus 2026",
-                time = "09:00",
-                location = "Gedung Robotika",
-                organizer = "Himpunan Mahasiswa Elektro",
-                category = "Lomba",
-                imageRes = R.drawable.img_3,
-                isPopular = false
-            ),
-            Event(
-                id = "5",
-                title = "Bincang Karir: Pekerjaan Masa Depan",
-                description = "Persiapkan dirimu menghadapi dunia kerja di era industri 4.0 dan ekonomi digital.",
-                date = "12 September 2026",
-                time = "10:00 - 12:00",
-                location = "Auditorium Lantai 2",
-                organizer = "Pusat Karir",
-                category = "Talkshow",
-                imageRes = R.drawable.img_4,
-                isPopular = true
             )
         )
         repository.seedEvents(dummyEvents)
     }
 
+    // Fungsi untuk mendaftar event
     fun registerForEvent(event: Event) {
         repository.registerForEvent(event) { success ->
             if (success) {
@@ -136,6 +108,7 @@ class EventViewModel : ViewModel() {
         }
     }
 
+    // Fungsi untuk menyelesaikan event
     fun completeEvent(event: Event) {
         repository.completeEvent(event) { success ->
             if (success) {
