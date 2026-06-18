@@ -37,26 +37,21 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     onLogoutClick: () -> Unit
 ) {
-    // Inisialisasi Repository untuk mengelola data profil dari Firebase
     val repository = remember { ProfileRepository() }
     val context = LocalContext.current
     
-    // State untuk menyimpan data user, status edit, dan status loading
     var user by remember { mutableStateOf<User?>(null) }
     var isEditing by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
 
-    // State sementara untuk menampung inputan saat user mengedit profil
     var editName by remember { mutableStateOf("") }
     var editNim by remember { mutableStateOf("") }
 
-    // Launcher untuk mengambil gambar dari galeri HP (Image Picker)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
             isLoading = true
-            // Mengunggah foto yang dipilih ke Firebase Storage
             repository.uploadProfileImage(it) { success, result ->
                 isLoading = false
                 if (success) {
@@ -69,7 +64,6 @@ fun ProfileScreen(
         }
     }
 
-    // Mengambil data profil terbaru dari Firebase saat layar pertama kali dibuka
     LaunchedEffect(Unit) {
         repository.getUserProfile { fetchedUser ->
             user = fetchedUser
@@ -84,7 +78,6 @@ fun ProfileScreen(
             TopAppBar(
                 title = { Text("Profil Saya") },
                 actions = {
-                    // Tombol batal hanya muncul saat sedang dalam mode edit
                     if (isEditing) {
                         IconButton(onClick = { isEditing = false }) {
                             Icon(Icons.Default.Close, contentDescription = "Batal")
@@ -95,7 +88,6 @@ fun ProfileScreen(
         }
     ) { padding ->
         if (isLoading) {
-            // Menampilkan loading spinner saat data sedang diproses
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
@@ -108,7 +100,6 @@ fun ProfileScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Komponen Foto Profil
                 Box(
                     modifier = Modifier
                         .size(120.dp)
@@ -116,7 +107,6 @@ fun ProfileScreen(
                         .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
                 ) {
                     if (user?.profileImageUrl != null) {
-                        // Menampilkan foto dari URL menggunakan library Coil
                         AsyncImage(
                             model = user?.profileImageUrl,
                             contentDescription = "Foto Profil",
@@ -124,7 +114,6 @@ fun ProfileScreen(
                             contentScale = ContentScale.Crop
                         )
                     } else {
-                        // Menampilkan ikon default jika belum ada foto
                         Icon(
                             Icons.Default.Person,
                             contentDescription = "Ikon Profil Default",
@@ -134,7 +123,6 @@ fun ProfileScreen(
                     }
                 }
 
-                // Tombol untuk memicu pengambilan foto dari galeri
                 TextButton(
                     onClick = { launcher.launch("image/*") },
                     modifier = Modifier.padding(top = 8.dp)
@@ -144,7 +132,6 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Menampilkan form edit jika isEditing = true
                 if (isEditing) {
                     OutlinedTextField(
                         value = editName,
@@ -162,7 +149,6 @@ fun ProfileScreen(
                         singleLine = true
                     )
                     Spacer(modifier = Modifier.height(24.dp))
-                    // Tombol untuk menyimpan perubahan ke database Firebase
                     Button(
                         onClick = {
                             val updatedUser = user?.copy(name = editName, nim = editNim)
@@ -188,7 +174,6 @@ fun ProfileScreen(
                         Text("Simpan Perubahan")
                     }
                 } else {
-                    // Tampilan profil standar (Mode Lihat)
                     Text(
                         text = user?.name ?: "Nama tidak tersedia",
                         style = MaterialTheme.typography.headlineMedium,
@@ -199,7 +184,6 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    // Menampilkan badge NIM jika tersedia
                     if (!user?.nim.isNullOrEmpty()) {
                         Surface(
                             color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
@@ -217,7 +201,6 @@ fun ProfileScreen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    // Menu interaktif untuk Edit dan Logout
                     ProfileMenuItem(
                         icon = Icons.Default.Edit,
                         title = "Edit Nama & NIM",
@@ -235,9 +218,6 @@ fun ProfileScreen(
     }
 }
 
-/**
- * Komponen reusable untuk item menu pada halaman profil
- */
 @Composable
 fun ProfileMenuItem(
     icon: ImageVector,
