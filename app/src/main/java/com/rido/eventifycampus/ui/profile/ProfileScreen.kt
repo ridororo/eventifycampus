@@ -175,6 +175,7 @@ fun ProfileScreen(
                         color = Color.Red,
                         onClick = onLogoutClick
                     )
+
                 }
             }
         }
