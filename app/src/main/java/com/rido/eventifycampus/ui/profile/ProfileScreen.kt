@@ -44,7 +44,6 @@ fun ProfileScreen(
     var isEditing by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
 
-    // Form states
     var editName by remember { mutableStateOf("") }
     var editNim by remember { mutableStateOf("") }
 
@@ -101,7 +100,6 @@ fun ProfileScreen(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Tampilan Foto Profil
                 Box(
                     modifier = Modifier
                         .size(120.dp)

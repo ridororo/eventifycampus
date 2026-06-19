@@ -119,7 +119,6 @@ fun EventDetailScreen(
                                 ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                                 else ButtonDefaults.buttonColors()
                         ) {
-                            // Perubahan teks tombol sesuai permintaan
                             Text(if (event.isRegistered) "Selesaikan Event" else "Daftar Sekarang")
                         }
                     }
