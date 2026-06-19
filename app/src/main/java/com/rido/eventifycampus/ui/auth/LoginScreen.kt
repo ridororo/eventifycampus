@@ -4,6 +4,9 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,18 +15,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.rido.eventifycampus.data.AuthRepository
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLoginSuccess: (String) -> Unit,
+    onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -51,17 +55,6 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nama Lengkap") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            enabled = !isLoading
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
@@ -78,7 +71,18 @@ fun LoginScreen(
             onValueChange = { password = it },
             label = { Text("Kata Sandi") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image = if (passwordVisible)
+                    Icons.Filled.Visibility
+                else Icons.Filled.VisibilityOff
+
+                val description = if (passwordVisible) "Sembunyikan sandi" else "Tampilkan sandi"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, contentDescription = description)
+                }
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true,
             enabled = !isLoading
@@ -91,8 +95,8 @@ fun LoginScreen(
         } else {
             Button(
                 onClick = {
-                    if (name.isBlank()) {
-                        Toast.makeText(context, "Nama wajib diisi", Toast.LENGTH_SHORT).show()
+                    if (email.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "Email dan password wajib diisi", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
 
@@ -100,7 +104,7 @@ fun LoginScreen(
                     repository.login(email, password) { success, error ->
                         isLoading = false
                         if (success) {
-                            onLoginSuccess(name.trim())
+                            onLoginSuccess()
                         } else {
                             Toast.makeText(context, error ?: "Masuk gagal", Toast.LENGTH_SHORT).show()
                         }

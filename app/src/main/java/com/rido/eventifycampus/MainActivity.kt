@@ -69,8 +69,7 @@ class MainActivity : ComponentActivity() {
 
                     composable("login") {
                         LoginScreen(
-                            onLoginSuccess = { name ->
-                                userName = name
+                            onLoginSuccess = {
                                 navController.navigate("home") {
                                     popUpTo("splash") { inclusive = true }
                                 }
